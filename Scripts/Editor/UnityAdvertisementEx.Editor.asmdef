@@ -1,9 +1,9 @@
 {
     "name": "UnityAdvertisementEx.Editor",
     "rootNamespace": "UnityAdvertisementEx.Editor",
-    "references": [
-        "GUID:c299f4197be27a748b749457f868b09e"
-    ],
+    "references": ["GUID:c299f4197be27a748b749457f868b09e",
+"GUID:5d0595cabca3f65418ec01a472735d07",
+"GUID:cbb42e4cfd9484f52972c8f05e1c3252"],
     "includePlatforms": [
         "Editor"
     ],
