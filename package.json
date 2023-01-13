@@ -1,0 +1,17 @@
+{
+  "name": "org.pcsoft.ads-ex",
+  "version": "0.1.0",
+  "displayName": "Unity Advertisement Extension",
+  "description": "Extension for diverse advertisements for Unity.",
+  "unity": "2021.3",
+  "keywords": [
+    "advertisement",
+    "extension",
+    "ads"
+  ],
+  "author": {
+    "name": "Pfeiffer C Soft",
+    "email": "kl3in3rhack3r@gmail.com",
+    "url": "https://github.com/KleinerHacker/unity-ads-ex"
+  }
+}
