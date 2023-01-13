@@ -1,7 +1,9 @@
+#if GOOGLE_ADMOB
 using System;
 using GoogleMobileAds.Api;
 using UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets;
 using UnityEngine;
+#endif
 
 namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 {
@@ -136,6 +138,10 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
         Success,
         NoAdToShow,
         RewardCanceled,
+    }
+#else
+    public sealed class RewardInfo
+    {
     }
 #endif
 }

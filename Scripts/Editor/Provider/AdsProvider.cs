@@ -1,10 +1,11 @@
-﻿using System.Linq;
+﻿#if GOOGLE_ADMOB
 using GoogleMobileAds.Editor;
 using UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider.Blocks;
 using UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets;
+using UnityEngine;
+#endif
 using UnityEditor;
 using UnityEditorEx.Editor.editor_ex.Scripts.Editor.Utils;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider

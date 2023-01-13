@@ -1,9 +1,11 @@
-﻿using System;
+﻿#if GOOGLE_ADMOB
+using System;
 using GoogleMobileAds.Api;
 using UnityEditor;
 using UnityEditorEx.Runtime.editor_ex.Scripts.Runtime.Assets;
 using UnityEngine;
 using UnityEngine.Serialization;
+#endif
 
 namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets
 {

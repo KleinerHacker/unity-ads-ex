@@ -1,6 +1,8 @@
+#if GOOGLE_ADMOB
 using GoogleMobileAds.Api;
 using UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets;
 using UnityEngine;
+#endif
 
 namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 {
