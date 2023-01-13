@@ -9,6 +9,11 @@
     "extension",
     "ads"
   ],
+  "dependencies": {
+    "org.pcsoft.editor-ex": "1.1.16",
+    "org.pcsoft.asset-loader": "2.0.1",
+    "org.pcsoft.common-ex": "1.1.9"
+  },
   "author": {
     "name": "Pfeiffer C Soft",
     "email": "kl3in3rhack3r@gmail.com",
