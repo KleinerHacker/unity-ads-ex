@@ -39,7 +39,7 @@ namespace UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider
         private bool _foldoutInterstitialWithAward;
 #endif
 
-        public AdsProvider() : base("Project/Player/Advertisement/AdMobs", SettingsScope.Project, new[] { "Advertisement", "Ad", "Ads", "AdMobs" })
+        public AdsProvider() : base("Project/Services/Ads/AdMobs", SettingsScope.Project, new[] { "Advertisement", "Ad", "Ads", "AdMobs" })
         {
         }
 
@@ -87,13 +87,15 @@ namespace UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider
             {
                 _adsBannerBlockList.DoLayoutList();
             }
+
             EditorGUILayout.EndFoldoutHeaderGroup();
-            
+
             _foldoutInterstitial = EditorGUILayout.BeginFoldoutHeaderGroup(_foldoutInterstitial, "Interstitial Ads");
             if (_foldoutInterstitial)
             {
                 _adsInterstitialBlockList.DoLayoutList();
             }
+
             EditorGUILayout.EndFoldoutHeaderGroup();
 
             _foldoutInterstitialWithAward = EditorGUILayout.BeginFoldoutHeaderGroup(_foldoutInterstitialWithAward, "Interstitial Ads with Awards");
@@ -101,6 +103,7 @@ namespace UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider
             {
                 _adsInterstitialWithAwardBlockList.DoLayoutList();
             }
+
             EditorGUILayout.EndFoldoutHeaderGroup();
 
             EditorGUILayout.EndVertical();
