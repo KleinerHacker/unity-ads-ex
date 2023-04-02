@@ -117,20 +117,20 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
         protected abstract void DoShow();
         protected abstract void DoHide();
 
-        protected virtual void BannerOnAdLoaded(object sender, EventArgs e)
+        protected virtual void OnAdLoaded()
         {
 #if LOGGING_ADMOB
             Debug.Log("[ADVERTISEMENT] Ad loaded, show now", this);
 #endif
-            OnLoaded?.Invoke(sender, e);
+            OnLoaded?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void BannerOnAdClosed(object sender, EventArgs e)
+        protected virtual void OnAdClosed()
         {
 #if LOGGING_ADMOB
             Debug.Log("[ADVERTISEMENT] Ad closed", this);
 #endif
-            OnClosed?.Invoke(sender, e);
+            OnClosed?.Invoke(this, EventArgs.Empty);
 
             if (IsShown && SupportHide)
             {
@@ -143,18 +143,18 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             Request();
         }
 
-        protected virtual void BannerOnAdOpening(object sender, EventArgs e)
+        protected virtual void OnAdOpening()
         {
 #if LOGGING_ADMOB
             Debug.Log("[ADVERTISEMENT] Ad opened", this);
 #endif
-            OnOpened?.Invoke(sender, e);
+            OnOpened?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void BannerOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
+        protected virtual void OnAdFailedToLoad(LoadAdError error)
         {
-            Debug.LogError("[ADVERTISEMENT] Ad failure: " + e.LoadAdError, this);
-            OnFailed?.Invoke(sender, e);
+            Debug.LogError("[ADVERTISEMENT] Ad failure: " + error, this);
+            OnFailed?.Invoke(this, new AdFailedToLoadEventArgs { LoadAdError = error });
 
             if (IsShown && SupportHide)
             {
@@ -164,12 +164,12 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             IsShown = false;
         }
 
-        protected virtual void BannerOnAdPaid(object sender, AdValueEventArgs e)
+        protected virtual void OnAdPaid(AdValue adValue)
         {
 #if LOGGING_ADMOB
-            Debug.Log("[ADVERTISEMENT] Ad paid: " + e.AdValue.Precision + ", " + e.AdValue.Value + ", " + e.AdValue.CurrencyCode);
+            Debug.Log("[ADVERTISEMENT] Ad paid: " + adValue.Precision + ", " + adValue.Value + ", " + adValue.CurrencyCode);
 #endif
-            OnPaid?.Invoke(sender, e);
+            OnPaid?.Invoke(this, new AdValueEventArgs { AdValue = adValue });
         }
     }
 

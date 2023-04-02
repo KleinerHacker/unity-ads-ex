@@ -16,7 +16,6 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 
         public override bool SupportHide { get; } = false;
 
-        public event EventHandler<AdFailedToLoadEventArgs> OnLoadingFailed;
         public event EventHandler<AdErrorEventArgs> OnShowingFailed;
 
         public void Show(Action<RewardInfo> onFinished)
@@ -39,39 +38,51 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 
         protected override void DoRequest(string id, AdRequest request)
         {
-            _rewardedAd = new RewardedAd(id);
-            _rewardedAd.OnAdLoaded += BannerOnAdLoaded;
-            _rewardedAd.OnAdClosed += BannerOnAdClosed;
-            _rewardedAd.OnAdOpening += BannerOnAdOpening;
-            _rewardedAd.OnAdFailedToLoad += RewardedAdOnAdFailedToLoad;
-            _rewardedAd.OnAdFailedToShow += RewardedAdOnAdFailedToShow;
-            _rewardedAd.OnPaidEvent += BannerOnAdPaid;
-            _rewardedAd.OnUserEarnedReward += RewardedAdOnUserEarnedReward;
+            RewardedAd.Load(id, request, (ad, error) =>
+            {
+                if (error == null)
+                {
+                    OnAdLoaded();
+                }
+                else
+                {
+                    OnAdFailedToLoad(error);
+                }
 
-            _rewardedAd.LoadAd(request);
+                DestroyAd(_rewardedAd);
+                _rewardedAd = ad;
+                InitAd(_rewardedAd);
+            });
         }
 
-        protected override void DoDispose()
-        {
-            _rewardedAd.OnAdLoaded -= BannerOnAdLoaded;
-            _rewardedAd.OnAdClosed -= BannerOnAdClosed;
-            _rewardedAd.OnAdOpening -= BannerOnAdOpening;
-            _rewardedAd.OnAdFailedToLoad -= RewardedAdOnAdFailedToLoad;
-            _rewardedAd.OnAdFailedToShow -= RewardedAdOnAdFailedToShow;
-            _rewardedAd.OnPaidEvent -= BannerOnAdPaid;
-            _rewardedAd.OnUserEarnedReward -= RewardedAdOnUserEarnedReward;
+        protected override void DoDispose() => DestroyAd(_rewardedAd);
 
-            _rewardedAd = null;
+        private void InitAd(RewardedAd ad)
+        {
+            ad.OnAdFullScreenContentClosed += OnAdClosed;
+            ad.OnAdFullScreenContentOpened += OnAdOpening;
+            ad.OnAdFullScreenContentFailed += OnAdFailedToShow;
+            ad.OnAdPaid += OnAdPaid;
+        }
+
+        private void DestroyAd(RewardedAd ad)
+        {
+            ad.OnAdFullScreenContentClosed -= OnAdClosed;
+            ad.OnAdFullScreenContentOpened -= OnAdOpening;
+            ad.OnAdFullScreenContentFailed -= OnAdFailedToShow;
+            ad.OnAdPaid -= OnAdPaid;
+
+            _rewardedAd.Destroy();
         }
 
         protected override void DoShow()
         {
-            if (_rewardedAd.IsLoaded())
+            if (_rewardedAd.CanShowAd())
             {
 #if LOGGING_ADMOB
                 Debug.Log("Show ad now");
 #endif
-                _rewardedAd.Show();
+                _rewardedAd.Show(reward => RewardedAdOnUserEarnedReward(reward));
             }
             else
             {
@@ -88,23 +99,15 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             throw new NotSupportedException();
         }
 
-        private void RewardedAdOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
+        private void OnAdFailedToShow(AdError error)
         {
-            Debug.LogError("[ADVERTISEMENT] Ad load failure: " + e.LoadAdError, this);
-            OnLoadingFailed?.Invoke(sender, e);
+            Debug.LogError("[ADVERTISEMENT] Ad show failure: " + error.GetMessage(), this);
+            OnShowingFailed?.Invoke(this, new AdErrorEventArgs() { AdError = error });
             _finishAction?.Invoke(new RewardInfo(null, RewardResult.NoAdToShow));
             _finishAction = null;
         }
 
-        private void RewardedAdOnAdFailedToShow(object sender, AdErrorEventArgs e)
-        {
-            Debug.LogError("[ADVERTISEMENT] Ad show failure: " + e.AdError.GetMessage(), this);
-            OnShowingFailed?.Invoke(sender, e);
-            _finishAction?.Invoke(new RewardInfo(null, RewardResult.NoAdToShow));
-            _finishAction = null;
-        }
-
-        private void RewardedAdOnUserEarnedReward(object sender, Reward e)
+        private void RewardedAdOnUserEarnedReward(Reward e)
         {
 #if LOGGING_ADMOB
             Debug.Log("[ADVERTISEMENT] Ad earned reward: " + e.Type + ", " + e.Amount);
@@ -113,9 +116,9 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             _finishAction = null;
         }
 
-        protected override void BannerOnAdClosed(object sender, EventArgs e)
+        protected override void OnAdClosed()
         {
-            base.BannerOnAdClosed(sender, e);
+            base.OnAdClosed();
             _finishAction?.Invoke(new RewardInfo(null, RewardResult.RewardCanceled));
             _finishAction = null;
         }

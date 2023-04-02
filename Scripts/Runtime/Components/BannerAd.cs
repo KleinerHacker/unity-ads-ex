@@ -36,6 +36,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             {
                 Hide();
             }
+
             base.OnDisable();
         }
 
@@ -44,23 +45,23 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
         protected override void DoRequest(string id, AdRequest request)
         {
             _banner = new BannerView(id, AdSize.SmartBanner, Preset.Position);
-            _banner.OnAdLoaded += BannerOnAdLoaded;
-            _banner.OnAdClosed += BannerOnAdClosed;
-            _banner.OnAdOpening += BannerOnAdOpening;
-            _banner.OnAdFailedToLoad += BannerOnAdFailedToLoad;
-            _banner.OnPaidEvent += BannerOnAdPaid;
+            _banner.OnBannerAdLoaded += OnAdLoaded;
+            _banner.OnAdFullScreenContentClosed += OnAdClosed;
+            _banner.OnAdFullScreenContentOpened += OnAdOpening;
+            _banner.OnBannerAdLoadFailed += OnAdFailedToLoad;
+            _banner.OnAdPaid += OnAdPaid;
 
             _request = request;
         }
 
         protected override void DoDispose()
         {
-            _banner.OnAdLoaded -= BannerOnAdLoaded;
-            _banner.OnAdClosed -= BannerOnAdClosed;
-            _banner.OnAdOpening -= BannerOnAdOpening;
-            _banner.OnAdFailedToLoad -= BannerOnAdFailedToLoad;
-            _banner.OnPaidEvent -= BannerOnAdPaid;
-            
+            _banner.OnBannerAdLoaded -= OnAdLoaded;
+            _banner.OnAdFullScreenContentClosed -= OnAdClosed;
+            _banner.OnAdFullScreenContentOpened -= OnAdOpening;
+            _banner.OnBannerAdLoadFailed -= OnAdFailedToLoad;
+            _banner.OnAdPaid -= OnAdPaid;
+
             _banner.Destroy();
             _banner = null;
         }
