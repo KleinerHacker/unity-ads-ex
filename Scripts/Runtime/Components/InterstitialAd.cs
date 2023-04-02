@@ -17,6 +17,12 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 
         #endregion
 
+        #region Events
+
+        public event EventHandler<AdErrorEventArgs> OnShowingFailed;
+
+        #endregion
+
         private GoogleMobileAds.Api.InterstitialAd _interstitialAd;
         private Action _finishAction;
 
@@ -31,7 +37,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
                 onFinished?.Invoke();
                 return;
             }
-            
+
 #if LOGGING_ADMOB
             Debug.Log("[ADVERTISEMENT] Show Interstitial Ad");
 #endif
@@ -46,31 +52,52 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 
         protected override void DoRequest(string id, AdRequest request)
         {
-            _interstitialAd = new GoogleMobileAds.Api.InterstitialAd(id);
-            _interstitialAd.OnAdLoaded += BannerOnAdLoaded;
-            _interstitialAd.OnAdClosed += BannerOnAdClosed;
-            _interstitialAd.OnAdOpening += BannerOnAdOpening;
-            _interstitialAd.OnAdFailedToLoad += BannerOnAdFailedToLoad;
-            _interstitialAd.OnPaidEvent += BannerOnAdPaid;
+            GoogleMobileAds.Api.InterstitialAd.Load(id, request, (ad, error) =>
+            {
+                if (error == null)
+                {
+                    OnAdLoaded();
+                }
+                else
+                {
+                    OnAdFailedToLoad(error);
+                }
 
-            _interstitialAd.LoadAd(request);
+                DestroyAd(_interstitialAd);
+                _interstitialAd = ad;
+                InitAd(_interstitialAd);
+            });
         }
 
-        protected override void DoDispose()
+        protected override void DoDispose() => DestroyAd(_interstitialAd);
+
+        private void InitAd(GoogleMobileAds.Api.InterstitialAd ad)
         {
-            _interstitialAd.OnAdLoaded -= BannerOnAdLoaded;
-            _interstitialAd.OnAdClosed -= BannerOnAdClosed;
-            _interstitialAd.OnAdOpening -= BannerOnAdOpening;
-            _interstitialAd.OnAdFailedToLoad -= BannerOnAdFailedToLoad;
-            _interstitialAd.OnPaidEvent -= BannerOnAdPaid;
+            if (ad == null)
+                return;
+
+            ad.OnAdFullScreenContentClosed += OnAdClosed;
+            ad.OnAdFullScreenContentOpened += OnAdOpening;
+            ad.OnAdFullScreenContentFailed += OnAdFailedToShow;
+            ad.OnAdPaid += OnAdPaid;
+        }
+
+        private void DestroyAd(GoogleMobileAds.Api.InterstitialAd ad)
+        {
+            if (ad == null)
+                return;
+
+            ad.OnAdFullScreenContentClosed -= OnAdClosed;
+            ad.OnAdFullScreenContentOpened -= OnAdOpening;
+            ad.OnAdFullScreenContentFailed -= OnAdFailedToShow;
+            ad.OnAdPaid -= OnAdPaid;
 
             _interstitialAd.Destroy();
-            _interstitialAd = null;
         }
 
         protected override void DoShow()
         {
-            if (_interstitialAd.IsLoaded())
+            if (_interstitialAd.CanShowAd())
             {
                 _interstitialAd.Show();
             }
@@ -86,16 +113,24 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             throw new NotSupportedException();
         }
 
-        protected override void BannerOnAdClosed(object sender, EventArgs e)
+        protected override void OnAdClosed()
         {
-            base.BannerOnAdClosed(sender, e);
+            base.OnAdClosed();
             _finishAction?.Invoke();
             _finishAction = null;
         }
 
-        protected override void BannerOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
+        protected override void OnAdFailedToLoad(LoadAdError error)
         {
-            base.BannerOnAdFailedToLoad(sender, e);
+            base.OnAdFailedToLoad(error);
+            _finishAction?.Invoke();
+            _finishAction = null;
+        }
+
+        private void OnAdFailedToShow(AdError error)
+        {
+            Debug.LogError("[ADVERTISEMENT] Ad show failure: " + error.GetMessage(), this);
+            OnShowingFailed?.Invoke(this, new AdErrorEventArgs { AdError = error });
             _finishAction?.Invoke();
             _finishAction = null;
         }
