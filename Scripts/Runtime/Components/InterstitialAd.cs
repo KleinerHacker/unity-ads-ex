@@ -141,6 +141,8 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             OnShowingFailed?.Invoke(this, new AdErrorEventArgs { AdError = error });
             _finishAction?.Invoke();
             _finishAction = null;
+
+            IsShown = false;
         }
     }
 #endif

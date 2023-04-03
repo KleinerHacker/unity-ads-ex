@@ -12,7 +12,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
     {
         #region Properties
 
-        public bool IsShown { get; private set; }
+        public bool IsShown { get; protected set; }
         public bool IsReady { get; private set; }
         public abstract bool SupportHide { get; }
 
