@@ -113,6 +113,8 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             OnShowingFailed?.Invoke(this, new AdErrorEventArgs() { AdError = error });
             _finishAction?.Invoke(new RewardInfo(null, RewardResult.NoAdToShow));
             _finishAction = null;
+
+            IsShown = false;
         }
 
         private void RewardedAdOnUserEarnedReward(Reward e)
@@ -122,6 +124,8 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 #endif
             _finishAction?.Invoke(new RewardInfo(e, RewardResult.Success));
             _finishAction = null;
+
+            IsShown = false;
         }
 
         protected override void OnAdClosed()
