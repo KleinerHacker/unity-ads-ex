@@ -54,18 +54,23 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
         {
             GoogleMobileAds.Api.InterstitialAd.Load(id, request, (ad, error) =>
             {
-                if (error == null)
+                try
                 {
-                    OnAdLoaded();
+                    if (error == null)
+                    {
+                        OnAdLoaded();
+                    }
+                    else
+                    {
+                        OnAdFailedToLoad(error);
+                    }
                 }
-                else
+                finally
                 {
-                    OnAdFailedToLoad(error);
+                    DestroyAd(_interstitialAd, id);
+                    _interstitialAd = ad;
+                    InitAd(_interstitialAd, id);
                 }
-
-                DestroyAd(_interstitialAd, id);
-                _interstitialAd = ad;
-                InitAd(_interstitialAd, id);
             });
         }
 
@@ -105,7 +110,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 
         protected override void DoShow()
         {
-            if (_interstitialAd.CanShowAd())
+            if (_interstitialAd != null && _interstitialAd.CanShowAd())
             {
                 _interstitialAd.Show();
             }
@@ -113,6 +118,8 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             {
                 _finishAction?.Invoke();
                 _finishAction = null;
+
+                Request();
             }
         }
 

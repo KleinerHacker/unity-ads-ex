@@ -40,18 +40,23 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
         {
             RewardedAd.Load(id, request, (ad, error) =>
             {
-                if (error == null)
+                try
                 {
-                    OnAdLoaded();
+                    if (error == null)
+                    {
+                        OnAdLoaded();
+                    }
+                    else
+                    {
+                        OnAdFailedToLoad(error);
+                    }
                 }
-                else
+                finally
                 {
-                    OnAdFailedToLoad(error);
+                    DestroyAd(_rewardedAd, id);
+                    _rewardedAd = ad;
+                    InitAd(_rewardedAd, id);
                 }
-
-                DestroyAd(_rewardedAd, id);
-                _rewardedAd = ad;
-                InitAd(_rewardedAd, id);
             });
         }
 
@@ -85,7 +90,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 
         protected override void DoShow()
         {
-            if (_rewardedAd.CanShowAd())
+            if (_rewardedAd != null && _rewardedAd.CanShowAd())
             {
 #if LOGGING_ADMOB
                 Debug.Log("[ADVERTISEMENT] Show ad now");
@@ -99,6 +104,8 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 #endif
                 _finishAction?.Invoke(new RewardInfo(null, RewardResult.NoAdToShow));
                 _finishAction = null;
+
+                Request();
             }
         }
 
