@@ -1,6 +1,6 @@
 {
   "name": "org.pcsoft.ads-ex",
-  "version": "1.1.0-EA.01",
+  "version": "1.1.0-EA.02",
   "displayName": "Unity Advertisement Extension",
   "description": "Extension for diverse advertisements for Unity.",
   "unity": "2021.3",
@@ -10,6 +10,7 @@
     "ads"
   ],
   "dependencies": {
+    "org.pcsoft.base": "1.0.2",
     "org.pcsoft.editor-ex": "1.1.17",
     "org.pcsoft.asset-loader": "2.0.1",
     "org.pcsoft.common-ex": "1.1.12"

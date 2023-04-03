@@ -63,18 +63,22 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
                     OnAdFailedToLoad(error);
                 }
 
-                DestroyAd(_interstitialAd);
+                DestroyAd(_interstitialAd, id);
                 _interstitialAd = ad;
-                InitAd(_interstitialAd);
+                InitAd(_interstitialAd, id);
             });
         }
 
-        protected override void DoDispose() => DestroyAd(_interstitialAd);
+        protected override void DoDispose() => DestroyAd(_interstitialAd, "");
 
-        private void InitAd(GoogleMobileAds.Api.InterstitialAd ad)
+        private void InitAd(GoogleMobileAds.Api.InterstitialAd ad, string id)
         {
             if (ad == null)
                 return;
+
+#if LOGGING_ADMOB
+            Debug.Log("[ADVERTISEMENT] Initialize Interstitial Ad: " + id);
+#endif
 
             ad.OnAdFullScreenContentClosed += OnAdClosed;
             ad.OnAdFullScreenContentOpened += OnAdOpening;
@@ -82,10 +86,14 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             ad.OnAdPaid += OnAdPaid;
         }
 
-        private void DestroyAd(GoogleMobileAds.Api.InterstitialAd ad)
+        private void DestroyAd(GoogleMobileAds.Api.InterstitialAd ad, string id)
         {
             if (ad == null)
                 return;
+
+#if LOGGING_ADMOB
+            Debug.Log("[ADVERTISEMENT] Destroy Interstitial Ad: " + id);
+#endif
 
             ad.OnAdFullScreenContentClosed -= OnAdClosed;
             ad.OnAdFullScreenContentOpened -= OnAdOpening;

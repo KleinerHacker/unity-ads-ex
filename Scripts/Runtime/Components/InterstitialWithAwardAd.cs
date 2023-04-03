@@ -49,24 +49,32 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
                     OnAdFailedToLoad(error);
                 }
 
-                DestroyAd(_rewardedAd);
+                DestroyAd(_rewardedAd, id);
                 _rewardedAd = ad;
-                InitAd(_rewardedAd);
+                InitAd(_rewardedAd, id);
             });
         }
 
-        protected override void DoDispose() => DestroyAd(_rewardedAd);
+        protected override void DoDispose() => DestroyAd(_rewardedAd, "");
 
-        private void InitAd(RewardedAd ad)
+        private void InitAd(RewardedAd ad, string id)
         {
+#if LOGGING_ADMOB
+            Debug.Log("[ADVERTISEMENT] Initialize Interstitial Ad With Award: " + id);
+#endif
+
             ad.OnAdFullScreenContentClosed += OnAdClosed;
             ad.OnAdFullScreenContentOpened += OnAdOpening;
             ad.OnAdFullScreenContentFailed += OnAdFailedToShow;
             ad.OnAdPaid += OnAdPaid;
         }
 
-        private void DestroyAd(RewardedAd ad)
+        private void DestroyAd(RewardedAd ad, string id)
         {
+#if LOGGING_ADMOB
+            Debug.Log("[ADVERTISEMENT] Destroy Interstitial Ad With Award: " + id);
+#endif
+
             ad.OnAdFullScreenContentClosed -= OnAdClosed;
             ad.OnAdFullScreenContentOpened -= OnAdOpening;
             ad.OnAdFullScreenContentFailed -= OnAdFailedToShow;
@@ -80,14 +88,14 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             if (_rewardedAd.CanShowAd())
             {
 #if LOGGING_ADMOB
-                Debug.Log("Show ad now");
+                Debug.Log("[ADVERTISEMENT] Show ad now");
 #endif
-                _rewardedAd.Show(reward => RewardedAdOnUserEarnedReward(reward));
+                _rewardedAd.Show(RewardedAdOnUserEarnedReward);
             }
             else
             {
 #if LOGGING_ADMOB
-                Debug.Log("No ad found yet");
+                Debug.Log("[ADVERTISEMENT] No ad found yet");
 #endif
                 _finishAction?.Invoke(new RewardInfo(null, RewardResult.NoAdToShow));
                 _finishAction = null;
