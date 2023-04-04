@@ -1,7 +1,6 @@
 ﻿#if PCSOFT_ADS_ADMOB
 using System;
 using GoogleMobileAds.Api;
-using PlasticGui.WorkspaceWindow.Merge;
 using UnityEngine;
 
 namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
