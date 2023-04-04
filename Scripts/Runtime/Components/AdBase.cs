@@ -1,19 +1,17 @@
-#if GOOGLE_ADMOB
+#if PCSOFT_ADS_ADMOB
 using System;
 using GoogleMobileAds.Api;
 using UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets;
 using UnityEngine;
-#endif
 
 namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 {
-#if GOOGLE_ADMOB
-    public abstract class AdBase : MonoBehaviour
+    public abstract partial class AdBase : MonoBehaviour
     {
         #region Properties
 
         public bool IsShown { get; protected set; }
-        public bool IsReady { get; private set; }
+        public abstract bool IsReady { get; }
         public abstract bool SupportHide { get; }
 
         protected abstract string AdId { get; }
@@ -27,6 +25,8 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
         public event EventHandler OnClosed;
         public event EventHandler<AdFailedToLoadEventArgs> OnFailed;
         public event EventHandler<AdValueEventArgs> OnPaid;
+        public event EventHandler OnImpressionRecorded;
+        public event EventHandler OnClicked;
 
         #endregion
 
@@ -43,134 +43,6 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
         }
 
         #endregion
-
-        protected void Request()
-        {
-            if (IsReady)
-                return;
-
-#if !UNITY_EDITOR && GOOGLE_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
-#if LOGGING_ADMOB
-            Debug.Log("[ADVERTISEMENT] Try to request ad", this);
-#endif
-
-            var request = new AdRequest.Builder().Build();
-
-            DoRequest(AdId, request);
-#endif
-            IsReady = true;
-        }
-
-        protected void Dispose()
-        {
-            if (!IsReady)
-                return;
-
-#if LOGGING_ADMOB
-            Debug.Log("[ADVERTISEMENT] Try top destroy ad");
-#endif
-
-#if !UNITY_EDITOR && GOOGLE_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
-            DoDispose();
-#endif
-            IsReady = false;
-        }
-
-        public void Show()
-        {
-            if (!IsReady)
-                throw new InvalidOperationException("Ad is not ready yet. please call 'Request' first");
-            if (IsShown)
-                return;
-
-#if LOGGING_ADMOB
-            Debug.Log("[ADVERTISEMENT] Try to show ad", this);
-#endif
-
-#if !UNITY_EDITOR && GOOGLE_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
-            DoShow();
-#endif
-            IsShown = true;
-        }
-
-        public void Hide()
-        {
-            if (!SupportHide)
-                throw new NotSupportedException("Ad do not support 'Hide'");
-            if (!IsReady)
-                throw new InvalidOperationException("Ad is not ready yet. please call 'Request' first");
-            if (!IsShown)
-                return;
-
-#if LOGGING_ADMOB
-            Debug.Log("[ADVERTISEMENT] Hide ad", this);
-#endif
-
-#if !UNITY_EDITOR && GOOGLE_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
-            DoHide();
-#endif
-            IsShown = false;
-        }
-
-        protected abstract void DoRequest(string id, AdRequest request);
-        protected abstract void DoDispose();
-        protected abstract void DoShow();
-        protected abstract void DoHide();
-
-        protected virtual void OnAdLoaded()
-        {
-#if LOGGING_ADMOB
-            Debug.Log("[ADVERTISEMENT] Ad loaded, show now", this);
-#endif
-            OnLoaded?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected virtual void OnAdClosed()
-        {
-#if LOGGING_ADMOB
-            Debug.Log("[ADVERTISEMENT] Ad closed", this);
-#endif
-            OnClosed?.Invoke(this, EventArgs.Empty);
-
-            if (IsShown && SupportHide)
-            {
-                Hide();
-            }
-
-            IsShown = false;
-
-            Dispose();
-            Request();
-        }
-
-        protected virtual void OnAdOpening()
-        {
-#if LOGGING_ADMOB
-            Debug.Log("[ADVERTISEMENT] Ad opened", this);
-#endif
-            OnOpened?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected virtual void OnAdFailedToLoad(LoadAdError error)
-        {
-            Debug.LogError("[ADVERTISEMENT] Ad failure: " + error, this);
-            OnFailed?.Invoke(this, new AdFailedToLoadEventArgs { LoadAdError = error });
-
-            if (IsShown && SupportHide)
-            {
-                Hide();
-            }
-
-            IsShown = false;
-        }
-
-        protected virtual void OnAdPaid(AdValue adValue)
-        {
-#if LOGGING_ADMOB
-            Debug.Log("[ADVERTISEMENT] Ad paid: " + adValue.Precision + ", " + adValue.Value + ", " + adValue.CurrencyCode);
-#endif
-            OnPaid?.Invoke(this, new AdValueEventArgs { AdValue = adValue });
-        }
     }
 
     public abstract class AdBase<T> : AdBase where T : AdsItem
@@ -197,5 +69,5 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 
         #endregion
     }
-#endif
 }
+#endif

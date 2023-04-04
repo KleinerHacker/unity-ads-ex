@@ -1,16 +1,14 @@
-﻿#if !UNITY_EDITOR && GOOGLE_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
+﻿#if PCSOFT_ADS_ADMOB
+#if PCSOFT_ADS_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
 using System.Collections.Generic;
 using GoogleMobileAds.Api;
 #endif
-
-#if GOOGLE_ADMOB
 using UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets;
 using UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components;
 using UnityAssetLoader.Runtime.asset_loader.Scripts.Runtime;
 using InterstitialAd = UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components.InterstitialAd;
-#endif
-
 using UnityEngine;
+using RewardedAd = UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components.RewardedAd;
 
 namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime
 {
@@ -19,12 +17,10 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
         public static void Initialize()
         {
-#if GOOGLE_ADMOB
             Debug.Log("Load ads...");
             AssetResourcesLoader.LoadFromResources<AdsSettings>("");
-#endif
-            
-#if !UNITY_EDITOR && GOOGLE_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
+
+#if PCSOFT_ADS_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
             Debug.Log("> Ads");
             var requestConfiguration = new RequestConfiguration.Builder()
                 .SetTagForChildDirectedTreatment(TagForChildDirectedTreatment.True)
@@ -32,14 +28,13 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime
                 .SetTestDeviceIds(new List<string> { AdRequest.TestDeviceSimulator })
                 .build();
             MobileAds.SetRequestConfiguration(requestConfiguration);
-            MobileAds.Initialize(initStatus => Debug.Log("Initialize Ads"));
+            MobileAds.Initialize(_ => Debug.Log("Initialize Ads"));
 #endif
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void InitializeLate()
         {
-#if GOOGLE_ADMOB
             Debug.Log("Initialize ads...");
             foreach (var item in AdsSettings.Singleton.BannerItems)
             {
@@ -56,15 +51,15 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime
                 var interstitialAd = go.AddComponent<InterstitialAd>();
                 interstitialAd.Preset = item;
             }
-            
-            foreach (var item in AdsSettings.Singleton.InterstitialWithAwardItems)
+
+            foreach (var item in AdsSettings.Singleton.RewardedItems)
             {
                 var go = new GameObject("Interstitial with Award (" + item.Identifier + ")");
                 Object.DontDestroyOnLoad(go);
-                var interstitialWithAwardAd = go.AddComponent<InterstitialWithAwardAd>();
-                interstitialWithAwardAd.Preset = item;
+                var awardAd = go.AddComponent<RewardedAd>();
+                awardAd.Preset = item;
             }
-#endif
         }
     }
 }
+#endif
