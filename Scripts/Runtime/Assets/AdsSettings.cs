@@ -1,4 +1,4 @@
-﻿#if GOOGLE_ADMOB
+﻿#if PCSOFT_ADS_ADMOB
 using System;
 using GoogleMobileAds.Api;
 using UnityEditor;
@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 
 namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets
 {
-#if GOOGLE_ADMOB
+#if PCSOFT_ADS_ADMOB
     public sealed class AdsSettings : ProviderAsset<AdsSettings>
     {
         #region Static Area
@@ -30,8 +30,9 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets
         [SerializeField]
         private AdsInterstitialItem[] interstitialItems = Array.Empty<AdsInterstitialItem>();
 
+        [FormerlySerializedAs("interstitialWithAwardItems")]
         [SerializeField]
-        private AdsInterstitialWithAwardItem[] interstitialWithAwardItems = Array.Empty<AdsInterstitialWithAwardItem>();
+        private AdsRewardedItem[] rewardedItems = Array.Empty<AdsRewardedItem>();
 
         #endregion
 
@@ -41,7 +42,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets
 
         public AdsInterstitialItem[] InterstitialItems => interstitialItems;
 
-        public AdsInterstitialWithAwardItem[] InterstitialWithAwardItems => interstitialWithAwardItems;
+        public AdsRewardedItem[] RewardedItems => rewardedItems;
 
         #endregion
     }
@@ -86,6 +87,15 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets
         [SerializeField]
         private bool showImmediately;
 
+        [SerializeField]
+        private AdBannerSize size = AdBannerSize.AnchorOrientationDepend;
+
+        [SerializeField]
+        private int width = -1;
+
+        [SerializeField]
+        private int height;
+
         #endregion
 
         #region Properties
@@ -93,6 +103,12 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets
         public AdPosition Position => position;
 
         public bool ShowImmediately => showImmediately;
+
+        public AdBannerSize Size => size;
+
+        public int Width => width;
+
+        public int Height => height;
 
         #endregion
     }
@@ -103,8 +119,20 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets
     }
 
     [Serializable]
-    public sealed class AdsInterstitialWithAwardItem : AdsInterstitialItem
+    public sealed class AdsRewardedItem : AdsInterstitialItem
     {
     }
 #endif
+
+    public enum AdBannerSize
+    {
+        Banner = 0x00,
+        IabBanner = 0x10,
+        MediumRectangle = 0x20,
+        Leaderboard = 0x30,
+        AnchorLandscape = 0xA0,
+        AnchorPortrait = 0xB0,
+        AnchorOrientationDepend = 0xC0,
+        Custom = 0xFF,
+    }
 }

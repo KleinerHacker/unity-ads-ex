@@ -1,18 +1,17 @@
-#if GOOGLE_ADMOB
+#if PCSOFT_ADS_ADMOB
 using GoogleMobileAds.Api;
 using UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets;
 using UnityEngine;
-#endif
 
 namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 {
-#if GOOGLE_ADMOB
     [DisallowMultipleComponent]
-    public sealed class BannerAd : AdBase<AdsBannerItem>
+    public sealed partial class BannerAd : AdBase<AdsBannerItem>
     {
         #region Properties
 
         public override bool SupportHide { get; } = true;
+        public override bool IsReady => _banner != null;
 
         #endregion
 
@@ -41,42 +40,6 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
         }
 
         #endregion
-
-        protected override void DoRequest(string id, AdRequest request)
-        {
-            _banner = new BannerView(id, AdSize.SmartBanner, Preset.Position);
-            _banner.OnBannerAdLoaded += OnAdLoaded;
-            _banner.OnAdFullScreenContentClosed += OnAdClosed;
-            _banner.OnAdFullScreenContentOpened += OnAdOpening;
-            _banner.OnBannerAdLoadFailed += OnAdFailedToLoad;
-            _banner.OnAdPaid += OnAdPaid;
-
-            _request = request;
-        }
-
-        protected override void DoDispose()
-        {
-            _banner.OnBannerAdLoaded -= OnAdLoaded;
-            _banner.OnAdFullScreenContentClosed -= OnAdClosed;
-            _banner.OnAdFullScreenContentOpened -= OnAdOpening;
-            _banner.OnBannerAdLoadFailed -= OnAdFailedToLoad;
-            _banner.OnAdPaid -= OnAdPaid;
-
-            _banner.Destroy();
-            _banner = null;
-        }
-
-        protected override void DoShow()
-        {
-            _banner.LoadAd(_request);
-        }
-
-        protected override void DoHide()
-        {
-            _banner.Hide();
-            Dispose();
-            Request();
-        }
     }
-#endif
 }
+#endif

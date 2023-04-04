@@ -1,12 +1,18 @@
-﻿#if GOOGLE_ADMOB
+﻿#if PCSOFT_ADS_ADMOB
 using GoogleMobileAds.Editor;
 using UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider.Blocks;
 using UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Assets;
 using UnityEngine;
-#endif
 using UnityEditor;
 using UnityEditorEx.Editor.editor_ex.Scripts.Editor.Utils;
 using UnityEngine.UIElements;
+
+#else
+using UnityEditor;
+using UnityEditorEx.Editor.editor_ex.Scripts.Editor.Utils;
+using UnityEngine;
+using UnityEngine.UIElements;
+#endif
 
 namespace UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider
 {
@@ -22,21 +28,21 @@ namespace UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider
 
         #endregion
 
-#if GOOGLE_ADMOB
+#if PCSOFT_ADS_ADMOB
         private SerializedObject _serializedObject;
         private SerializedProperty _bannerItemsProperty;
         private SerializedProperty _interstitialItemsProperty;
-        private SerializedProperty _interstitialWithAwardItemsProperty;
+        private SerializedProperty _rewardedItemsProperty;
 
         private GoogleMobileAdsSettings _ads;
         private UnityEditor.Editor _adsEditor;
         private AdsBannerBlockList _adsBannerBlockList;
         private AdsInterstitialBlockList _adsInterstitialBlockList;
-        private AdsInterstitialWithAwardBlockList _adsInterstitialWithAwardBlockList;
+        private AdsRewardedBlockList _adsRewardedBlockList;
 
         private bool _foldoutBanner;
         private bool _foldoutInterstitial;
-        private bool _foldoutInterstitialWithAward;
+        private bool _foldoutRewarded;
 #endif
 
         public AdsProvider() : base("Project/Services/Ads/AdMobs", SettingsScope.Project, new[] { "Advertisement", "Ad", "Ads", "AdMobs" })
@@ -45,7 +51,7 @@ namespace UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider
 
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
-#if GOOGLE_ADMOB
+#if PCSOFT_ADS_ADMOB
             _ads = GoogleMobileAdsSettings.LoadInstance();
 
             _serializedObject = AdsSettings.SerializedSingleton;
@@ -54,24 +60,26 @@ namespace UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider
 
             _bannerItemsProperty = _serializedObject.FindProperty("bannerItems");
             _interstitialItemsProperty = _serializedObject.FindProperty("interstitialItems");
-            _interstitialWithAwardItemsProperty = _serializedObject.FindProperty("interstitialWithAwardItems");
+            _rewardedItemsProperty = _serializedObject.FindProperty("rewardedItems");
             _adsBannerBlockList = new AdsBannerBlockList(_serializedObject, _bannerItemsProperty);
             _adsInterstitialBlockList = new AdsInterstitialBlockList(_serializedObject, _interstitialItemsProperty);
-            _adsInterstitialWithAwardBlockList = new AdsInterstitialWithAwardBlockList(_serializedObject, _interstitialWithAwardItemsProperty);
+            _adsRewardedBlockList = new AdsRewardedBlockList(_serializedObject, _rewardedItemsProperty);
 #endif
         }
 
         public override void OnTitleBarGUI()
         {
             EditorGUILayout.BeginVertical();
-            ExtendedEditorGUILayout.SymbolFieldLeft("Activate", "GOOGLE_ADMOB");
-            ExtendedEditorGUILayout.SymbolFieldLeft("Verbose Logging", "LOGGING_ADMOB");
+            ExtendedEditorGUILayout.SymbolFieldLeft("Activate", "PCSOFT_ADS_ADMOB");
+            ExtendedEditorGUILayout.SymbolFieldLeft("Verbose Logging", "PCSOFT_ADS_ADMOB_LOGGING");
             EditorGUILayout.EndVertical();
         }
 
         public override void OnGUI(string searchContext)
         {
-#if GOOGLE_ADMOB
+            GUILayout.Space(15f);
+
+#if PCSOFT_ADS_ADMOB
             _serializedObject.Update();
 
             UnityEditor.Editor.CreateCachedEditor(_ads, null, ref _adsEditor);
@@ -98,10 +106,10 @@ namespace UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider
 
             EditorGUILayout.EndFoldoutHeaderGroup();
 
-            _foldoutInterstitialWithAward = EditorGUILayout.BeginFoldoutHeaderGroup(_foldoutInterstitialWithAward, "Interstitial Ads with Awards");
-            if (_foldoutInterstitialWithAward)
+            _foldoutRewarded = EditorGUILayout.BeginFoldoutHeaderGroup(_foldoutRewarded, "Rewarded Ads");
+            if (_foldoutRewarded)
             {
-                _adsInterstitialWithAwardBlockList.DoLayoutList();
+                _adsRewardedBlockList.DoLayoutList();
             }
 
             EditorGUILayout.EndFoldoutHeaderGroup();
@@ -109,6 +117,8 @@ namespace UnityAdvertisementEx.Editor.ads_ex.Scripts.Editor.Provider
             EditorGUILayout.EndVertical();
 
             _serializedObject.ApplyModifiedProperties();
+#else
+            EditorGUILayout.HelpBox("System is deactivated", MessageType.Info);
 #endif
         }
     }
