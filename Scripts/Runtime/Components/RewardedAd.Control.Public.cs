@@ -41,6 +41,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
                 _finishAction?.Invoke(new RewardInfo(null, RewardResult.NoAdToShow));
                 _finishAction = null;
 
+                IsShown = false;
                 Request();
             }
         }

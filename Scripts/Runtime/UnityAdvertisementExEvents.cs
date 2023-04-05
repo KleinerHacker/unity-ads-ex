@@ -22,13 +22,17 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime
 
 #if PCSOFT_ADS_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
             Debug.Log("> Ads");
+
             var requestConfiguration = new RequestConfiguration.Builder()
                 .SetTagForChildDirectedTreatment(TagForChildDirectedTreatment.True)
                 .SetTagForUnderAgeOfConsent(TagForUnderAgeOfConsent.True)
                 .SetTestDeviceIds(new List<string> { AdRequest.TestDeviceSimulator })
+                .SetSameAppKeyEnabled(true)
                 .build();
             MobileAds.SetRequestConfiguration(requestConfiguration);
             MobileAds.Initialize(_ => Debug.Log("Initialize Ads"));
+
+            MobileAds.RaiseAdEventsOnUnityMainThread = true;
 #endif
         }
 

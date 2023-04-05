@@ -53,6 +53,9 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 
         private void DestroyAd(GoogleMobileAds.Api.RewardedAd ad, string id)
         {
+            if (ad == null)
+                return;
+
 #if PCSOFT_ADS_ADMOB_LOGGING
             Debug.Log("[ADVERTISEMENT] Destroy Interstitial Ad With Award: " + id);
 #endif

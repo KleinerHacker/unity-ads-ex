@@ -26,7 +26,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             }
             catch (Exception e)
             {
-                Debug.LogError("Failure while event callback: " + e.Message);
+                Debug.LogError("[ADVERTISEMENT] Failure while event callback: " + e.Message);
             }
 
             if (IsShown && SupportHide)
@@ -66,7 +66,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             }
             catch (Exception e)
             {
-                Debug.LogError("Failure while event callback: " + e.Message);
+                Debug.LogError("[ADVERTISEMENT] Failure while event callback: " + e.Message);
             }
 
             if (IsShown && SupportHide)
