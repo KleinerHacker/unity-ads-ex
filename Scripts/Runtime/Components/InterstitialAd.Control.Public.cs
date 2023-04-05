@@ -11,7 +11,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             if (IsShown)
             {
 #if PCSOFT_ADS_ADMOB_LOGGING
-                Debug.Log("[ADVERTISEMENT] Ad already shown");
+                Debug.LogWarning("[ADVERTISEMENT] Interstitial Ad already shown");
 #endif
 
                 onFinished?.Invoke();
@@ -30,23 +30,29 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 #endif
         }
 
-        protected override void DoShow()
+        protected override bool DoShow()
         {
             if (_interstitialAd != null && _interstitialAd.CanShowAd())
             {
+#if PCSOFT_ADS_ADMOB_LOGGING
+                Debug.Log("[ADVERTISEMENT] Show interstitial ad now");
+#endif
                 _interstitialAd.Show();
+                return true;
             }
-            else
-            {
-                _finishAction?.Invoke();
-                _finishAction = null;
 
-                IsShown = false;
-                Request();
-            }
+#if PCSOFT_ADS_ADMOB_LOGGING
+            Debug.Log("[ADVERTISEMENT] Unable to show interstitial ad, not ready");
+#endif
+
+            _finishAction?.Invoke();
+            _finishAction = null;
+
+            Request();
+            return false;
         }
 
-        protected override void DoHide()
+        protected override bool DoHide()
         {
             throw new NotSupportedException();
         }

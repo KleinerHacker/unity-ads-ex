@@ -3,16 +3,19 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 {
     public sealed partial class BannerAd
     {
-        protected override void DoShow()
+        protected override bool DoShow()
         {
             _banner.LoadAd(_request);
+            return true;
         }
 
-        protected override void DoHide()
+        protected override bool DoHide()
         {
             _banner.Hide();
             Dispose();
             Request();
+
+            return true;
         }
     }
 }

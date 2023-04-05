@@ -1,0 +1,16 @@
+{
+  "name": "UnityAdvertisementEx.Demo",
+  "rootNamespace": "UnityAdvertisementEx.Demo",
+  "references": [
+    "GUID:c299f4197be27a748b749457f868b09e"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

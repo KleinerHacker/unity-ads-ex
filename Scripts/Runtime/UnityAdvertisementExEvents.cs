@@ -58,7 +58,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime
 
             foreach (var item in AdsSettings.Singleton.RewardedItems)
             {
-                var go = new GameObject("Interstitial with Award (" + item.Identifier + ")");
+                var go = new GameObject("Rewarded (" + item.Identifier + ")");
                 Object.DontDestroyOnLoad(go);
                 var awardAd = go.AddComponent<RewardedAd>();
                 awardAd.Preset = item;

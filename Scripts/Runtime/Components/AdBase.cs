@@ -8,9 +8,20 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 {
     public abstract partial class AdBase : MonoBehaviour
     {
+        private bool isShown;
+
         #region Properties
 
-        public bool IsShown { get; protected set; }
+        public bool IsShown
+        {
+            get => isShown;
+            protected set
+            {
+                isShown = value;
+                Debug.Log("[ADVERTISEMENT] > Is Shown set to " + value);
+            }
+        }
+
         public abstract bool IsReady { get; }
         public abstract bool SupportHide { get; }
 

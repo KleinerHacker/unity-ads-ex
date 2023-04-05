@@ -9,24 +9,24 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
     {
         #region Load and Failure
 
-        protected virtual void OnAdLoaded()
+        protected virtual void OnAdLoaded(string id)
         {
 #if PCSOFT_ADS_ADMOB_LOGGING
-            Debug.Log("[ADVERTISEMENT] Ad loaded, show now", this);
+            Debug.Log("[ADVERTISEMENT] Ad loaded: " + id, this);
 #endif
             OnLoaded?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void OnAdFailedToLoad(LoadAdError error, bool runNewRequest)
+        protected virtual void OnAdFailedToLoad(string id, LoadAdError error, bool runNewRequest)
         {
-            Debug.LogWarning("[ADVERTISEMENT] Ad failure: " + error, this);
+            Debug.LogWarning("[ADVERTISEMENT] Ad failure (" + id + "): " + error, this);
             try
             {
                 OnFailed?.Invoke(this, new AdFailedToLoadEventArgs { LoadAdError = error });
             }
             catch (Exception e)
             {
-                Debug.LogError("[ADVERTISEMENT] Failure while event callback: " + e.Message);
+                Debug.LogError("[ADVERTISEMENT] Failure while event callback (" + id + "): " + e.Message);
             }
 
             if (IsShown && SupportHide)

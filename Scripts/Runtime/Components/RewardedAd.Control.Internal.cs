@@ -14,11 +14,11 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
                 {
                     if (error == null)
                     {
-                        OnAdLoaded();
+                        OnAdLoaded(id);
                     }
                     else
                     {
-                        OnAdFailedToLoad(error, false);
+                        OnAdFailedToLoad(id, error, false);
                     }
                 }
                 finally
@@ -38,8 +38,11 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 
         private void InitAd(GoogleMobileAds.Api.RewardedAd ad, string id)
         {
+            if (ad == null)
+                return;
+
 #if PCSOFT_ADS_ADMOB_LOGGING
-            Debug.Log("[ADVERTISEMENT] Initialize Interstitial Ad With Award: " + id);
+            Debug.Log("[ADVERTISEMENT] Initialize Rewarded Ad: " + id);
 #endif
 
             ad.OnAdFullScreenContentOpened += OnAdOpening;
@@ -57,7 +60,7 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
                 return;
 
 #if PCSOFT_ADS_ADMOB_LOGGING
-            Debug.Log("[ADVERTISEMENT] Destroy Interstitial Ad With Award: " + id);
+            Debug.Log("[ADVERTISEMENT] Destroy Rewarded Ad: " + id);
 #endif
 
             ad.OnAdFullScreenContentOpened -= OnAdOpening;

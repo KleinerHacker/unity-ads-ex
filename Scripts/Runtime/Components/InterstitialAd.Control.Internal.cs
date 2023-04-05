@@ -14,11 +14,11 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
                 {
                     if (error == null)
                     {
-                        OnAdLoaded();
+                        OnAdLoaded(id);
                     }
                     else
                     {
-                        OnAdFailedToLoad(error, false);
+                        OnAdFailedToLoad(id, error, false);
                     }
                 }
                 finally

@@ -10,7 +10,9 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
         {
             if (IsShown)
             {
-                Debug.Log("Ad already shown");
+#if PCSOFT_ADS_ADMOB_LOGGING
+                Debug.LogWarning("[ADVERTISEMENT] Rewarded Ad already shown");
+#endif
 
                 onFinished?.Invoke(null);
                 return;
@@ -24,29 +26,29 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 #endif
         }
 
-        protected override void DoShow()
+        protected override bool DoShow()
         {
             if (_rewardedAd != null && _rewardedAd.CanShowAd())
             {
 #if PCSOFT_ADS_ADMOB_LOGGING
-                Debug.Log("[ADVERTISEMENT] Show ad now");
+                Debug.Log("[ADVERTISEMENT] Show rewarded ad now");
 #endif
                 _rewardedAd.Show(RewardedAdOnUserEarnedReward);
+                return true;
             }
-            else
-            {
-#if PCSOFT_ADS_ADMOB_LOGGING
-                Debug.Log("[ADVERTISEMENT] No ad found yet");
-#endif
-                _finishAction?.Invoke(new RewardInfo(null, RewardResult.NoAdToShow));
-                _finishAction = null;
 
-                IsShown = false;
-                Request();
-            }
+#if PCSOFT_ADS_ADMOB_LOGGING
+            Debug.Log("[ADVERTISEMENT] Unable to show rewarded ad, not ready");
+#endif
+
+            _finishAction?.Invoke(new RewardInfo(null, RewardResult.NoAdToShow));
+            _finishAction = null;
+
+            Request();
+            return false;
         }
 
-        protected override void DoHide()
+        protected override bool DoHide()
         {
             throw new NotSupportedException();
         }
