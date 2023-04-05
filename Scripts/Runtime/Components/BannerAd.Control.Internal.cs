@@ -60,9 +60,14 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             _banner = null;
         }
 
+        private void OnAdLoaded()
+        {
+            base.OnAdLoaded("");
+        }
+
         private void OnAdFailedToLoad(LoadAdError error)
         {
-            base.OnAdFailedToLoad(error, true);
+            base.OnAdFailedToLoad("", error, true);
         }
     }
 }

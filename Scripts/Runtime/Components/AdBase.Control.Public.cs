@@ -16,8 +16,10 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 #endif
 
 #if PCSOFT_ADS_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
-            DoShow();
+            if (!DoShow())
+                return;
 #endif
+
             IsShown = true;
         }
 
@@ -35,13 +37,15 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
 #endif
 
 #if PCSOFT_ADS_ADMOB && (UNITY_ANDROID || UNITY_IPHONE)
-            DoHide();
+            if (!DoHide())
+                return;
 #endif
+
             IsShown = false;
         }
 
-        protected abstract void DoShow();
-        protected abstract void DoHide();
+        protected abstract bool DoShow();
+        protected abstract bool DoHide();
     }
 }
 #endif

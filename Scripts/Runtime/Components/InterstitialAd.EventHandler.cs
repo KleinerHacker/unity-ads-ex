@@ -21,9 +21,9 @@ namespace UnityAdvertisementEx.Runtime.ads_ex.Scripts.Runtime.Components
             }
         }
 
-        protected override void OnAdFailedToLoad(LoadAdError error, bool runNewRequest)
+        protected override void OnAdFailedToLoad(string id, LoadAdError error, bool runNewRequest)
         {
-            base.OnAdFailedToLoad(error, runNewRequest);
+            base.OnAdFailedToLoad(id, error, runNewRequest);
 
             try
             {
